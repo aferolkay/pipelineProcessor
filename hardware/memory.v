@@ -9,7 +9,6 @@ output [(BYTE_SIZE*8)-1:0] RD
 reg [7:0] mem [515:0];
 
 initial begin
-
 	$readmemh("myProgram.hex",mem);
 end
 genvar i;

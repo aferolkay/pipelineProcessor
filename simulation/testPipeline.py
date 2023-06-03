@@ -107,6 +107,8 @@ async def showDecodeStage(dut):
     dut._log.info("immSrcD: %x", dut.immSrcD.value)
     dut._log.info("destinationSrcD: %x", dut.SYNTHESIZED_WIRE_9.value)
     dut._log.info("regSrcD: %x", dut.regSrcD.value)
+    dut._log.info("movImm: %x", dut.movImm.value)
+    dut._log.info("shD: %x", dut.shD.value)
 
 @cocotb.coroutine
 async def showExecuteStage(dut):
@@ -159,17 +161,25 @@ async def test2sComp(dut):
     clock = Clock(dut.clk, 100, units="ms")  # Create a 10us period clock on port clk
     cocotb.start_soon(clock.start())  # Start the clock
     await Timer(1,units="ns")
-
-    await breakPoint(dut,0x1dc)
-
-
-
-    await showFetchStage(dut)
+    await breakPoint(dut,0x178)
     await readRegisterFile(dut)
-    await showFlags(dut)
 
-
-
+"""
+    await breakPoint(dut,0x160)
+    #await showFetchStage(dut)
+    await RisingEdge(dut.clk)
+    await Timer(1,units="ns")
+    #await showDecodeStage(dut)
+    await RisingEdge(dut.clk)
+    await Timer(1,units="ns")
+    #await showExecuteStage(dut)
+    await RisingEdge(dut.clk)
+    await Timer(1,units="ns")
+    #await showMemoryStage(dut)
+    await RisingEdge(dut.clk)
+    await Timer(1,units="ns")
+    await showWriteBackStage(dut)
+"""
 
 
 

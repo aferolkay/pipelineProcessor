@@ -15,7 +15,7 @@
 
 // PROGRAM		"Quartus Prime"
 // VERSION		"Version 21.1.0 Build 842 10/21/2021 SJ Lite Edition"
-// CREATED		"Sat Jun  3 20:34:55 2023"
+// CREATED		"Sat Jun  3 23:23:11 2023"
 
 module pipelineProcessor(
 	clk,
@@ -44,15 +44,15 @@ wire	[63:0] decodeRegisterF;
 wire	destinationSrcE;
 wire	destinationSrcM;
 wire	destinationSrcW;
-wire	[156:0] executeRegisterD;
-wire	[156:0] executeRegisterE;
+wire	[157:0] executeRegisterD;
+wire	[157:0] executeRegisterE;
 wire	[31:0] extentedImm;
 wire	[31:0] extentedImmD;
 wire	[1:0] flagWriteD;
 wire	[1:0] flagWriteE;
 wire	[5:0] func;
 wire	[23:0] imm24;
-wire	immSrcD;
+wire	[1:0] immSrcD;
 wire	[31:0] instructionD;
 wire	[31:0] instructionF;
 wire	[106:0] memoryStageRegisterE;
@@ -60,6 +60,7 @@ wire	[106:0] memoryStageRegisterM;
 wire	memWriteD;
 wire	memWriteE;
 wire	memWriteM;
+wire	movImm;
 wire	[1:0] op;
 wire	[31:0] PC4D;
 wire	[31:0] PC4E;
@@ -119,12 +120,14 @@ wire	SYNTHESIZED_WIRE_7;
 wire	SYNTHESIZED_WIRE_8;
 wire	SYNTHESIZED_WIRE_9;
 wire	SYNTHESIZED_WIRE_10;
-wire	SYNTHESIZED_WIRE_11;
+wire	[31:0] SYNTHESIZED_WIRE_11;
 wire	[31:0] SYNTHESIZED_WIRE_12;
 wire	[3:0] SYNTHESIZED_WIRE_13;
 wire	[3:0] SYNTHESIZED_WIRE_14;
 wire	[3:0] SYNTHESIZED_WIRE_15;
-wire	[3:0] SYNTHESIZED_WIRE_16;
+wire	[1:0] SYNTHESIZED_WIRE_16;
+wire	[1:0] SYNTHESIZED_WIRE_17;
+wire	[3:0] SYNTHESIZED_WIRE_18;
 
 assign	SYNTHESIZED_WIRE_0 = 0;
 assign	SYNTHESIZED_WIRE_10 = 0;
@@ -163,10 +166,11 @@ controlUnit	b2v_controlUnit(
 	.regWrite(regWriteD),
 	.memWrite(memWriteD),
 	.ALUSrc(ALUSrcD),
-	.immSrc(immSrcD),
 	.destinationSrc(SYNTHESIZED_WIRE_9),
+	.movImm(movImm),
 	.ALUControl(ALUControlD),
 	.flagWrite(flagWriteD),
+	.immSrc(immSrcD),
 	.regSrc(regSrcD),
 	.resultSrc(resultSrcD));
 
@@ -210,7 +214,7 @@ simpleRegister	b2v_executeRegister(
 	.clk(clk),
 	.data(executeRegisterD),
 	.out(executeRegisterE));
-	defparam	b2v_executeRegister.W = 157;
+	defparam	b2v_executeRegister.W = 158;
 
 
 extender12or24	b2v_extender(
@@ -228,7 +232,7 @@ simpleRegister	b2v_fetchRegister(
 
 
 constantValueGenerator	b2v_fifteen(
-	.out(SYNTHESIZED_WIRE_16));
+	.out(SYNTHESIZED_WIRE_18));
 	defparam	b2v_fifteen.VAL = 15;
 	defparam	b2v_fifteen.W = 4;
 
@@ -260,7 +264,7 @@ assign	imm24 = instructionD[23:0];
 assign	shamtD = instructionD[11:7];
 
 
-assign	shD = instructionD[6:5];
+assign	SYNTHESIZED_WIRE_16 = instructionD[6:5];
 
 
 assign	Rn = instructionD[19:16];
@@ -269,26 +273,25 @@ assign	Rn = instructionD[19:16];
 assign	Rm = instructionD[3:0];
 
 
-
 assign	Rd = instructionD[15:12];
 
 
 assign	executeRegisterD[37:36] = shD;
 
 
-assign	executeRegisterD[41:38] = shamtD[3:0];
+assign	executeRegisterD[42:38] = shamtD;
 
 
-assign	executeRegisterD[73:42] = SYNTHESIZED_WIRE_2;
+assign	executeRegisterD[74:43] = SYNTHESIZED_WIRE_2;
 
 
 assign	decodeRegisterF[31:0] = PCplus4F;
 
 
-assign	executeRegisterD[105:74] = SYNTHESIZED_WIRE_3;
+assign	executeRegisterD[106:75] = SYNTHESIZED_WIRE_3;
 
 
-assign	executeRegisterD[109:106] = condition;
+assign	executeRegisterD[110:107] = condition;
 
 
 
@@ -301,76 +304,76 @@ conditionCheck	b2v_inst23(
 	.flagW(flagWriteE),
 	.condEx(condEx));
 
-assign	executeRegisterD[141:110] = PC4D;
+assign	executeRegisterD[142:111] = PC4D;
 
 
-assign	conditionE = executeRegisterE[109:106];
+assign	conditionE = executeRegisterE[110:107];
 
 
-assign	executeRegisterD[143:142] = flagWriteD;
+assign	executeRegisterD[144:143] = flagWriteD;
 
 
-assign	executeRegisterD[144] = ALUSrcD;
+assign	executeRegisterD[145] = ALUSrcD;
 
 
-assign	executeRegisterD[148:145] = ALUControlD;
+assign	executeRegisterD[149:146] = ALUControlD;
 
 
-assign	executeRegisterD[150:149] = resultSrcD;
+assign	executeRegisterD[151:150] = resultSrcD;
 
 
 assign	instructionD = decodeRegisterD[63:32];
 
 
-assign	executeRegisterD[151] = memWriteD;
+assign	executeRegisterD[152] = memWriteD;
 
 
-assign	executeRegisterD[152] = regWriteD;
+assign	executeRegisterD[153] = regWriteD;
 
 
-assign	executeRegisterD[153] = branchD;
+assign	executeRegisterD[154] = branchD;
 
 
-assign	executeRegisterD[154] = PCSrcD;
+assign	executeRegisterD[155] = PCSrcD;
 
 
-assign	executeRegisterD[155] = regDataSrcD;
+assign	executeRegisterD[156] = regDataSrcD;
 
 
-assign	flagWriteE = executeRegisterE[143:142];
+assign	flagWriteE = executeRegisterE[144:143];
 
 
-assign	ALUSrcE = executeRegisterE[144];
+assign	ALUSrcE = executeRegisterE[145];
 
 
-assign	ALUControlE = executeRegisterE[148:145];
+assign	ALUControlE = executeRegisterE[149:146];
 
 
-assign	resultSrcE = executeRegisterE[150:149];
+assign	resultSrcE = executeRegisterE[151:150];
 
 
-assign	memWriteE = executeRegisterE[151];
+assign	memWriteE = executeRegisterE[152];
 
 
 assign	PC4D = decodeRegisterD[31:0];
 
 
-assign	regWriteE = executeRegisterE[152];
+assign	regWriteE = executeRegisterE[153];
 
 
-assign	branchE = executeRegisterE[153];
+assign	branchE = executeRegisterE[154];
 
 
-assign	PCSrcE = executeRegisterE[154];
+assign	PCSrcE = executeRegisterE[155];
 
 
-assign	regDataSrcE = executeRegisterE[155];
+assign	regDataSrcE = executeRegisterE[156];
 
 
-assign	writeDataE = executeRegisterE[73:42];
+assign	writeDataE = executeRegisterE[74:43];
 
 
-assign	srcAE = executeRegisterE[105:74];
+assign	srcAE = executeRegisterE[106:75];
 
 
 assign	extentedImm = executeRegisterE[31:0];
@@ -382,13 +385,13 @@ assign	WA3E = executeRegisterE[35:32];
 assign	shE = executeRegisterE[37:36];
 
 
-assign	shamtE[3:0] = executeRegisterE[41:38];
+assign	shamtE = executeRegisterE[42:38];
 
 
 assign	PCplus8D = PCplus4F;
 
 
-assign	PC4E = executeRegisterE[141:110];
+assign	PC4E = executeRegisterE[142:111];
 
 
 assign	memoryStageRegisterE[104] = SYNTHESIZED_WIRE_4;
@@ -521,10 +524,10 @@ assign	ALUOutW = writebackRegisterW[98:67];
 assign	writeDataW = writebackRegisterW[66:35];
 
 
-assign	executeRegisterD[156] = SYNTHESIZED_WIRE_9;
+assign	executeRegisterD[157] = SYNTHESIZED_WIRE_9;
 
 
-assign	destinationSrcE = executeRegisterE[156];
+assign	destinationSrcE = executeRegisterE[157];
 
 
 assign	memoryStageRegisterE[106] = destinationSrcE;
@@ -557,7 +560,13 @@ simpleRegister	b2v_memoryStageRegister(
 	.out(memoryStageRegisterM));
 	defparam	b2v_memoryStageRegister.W = 107;
 
-assign	SYNTHESIZED_WIRE_11 =  ~clk;
+
+mux2to1	b2v_out1Selector(
+	.sel(movImm),
+	.in0(SYNTHESIZED_WIRE_11),
+	.in1(extentedImmD),
+	.out(SYNTHESIZED_WIRE_2));
+	defparam	b2v_out1Selector.W = 32;
 
 
 mux2to1	b2v_PCMux(
@@ -569,7 +578,7 @@ mux2to1	b2v_PCMux(
 
 
 Register_file	b2v_registerFile(
-	.clk(SYNTHESIZED_WIRE_11),
+	.clk(clk),
 	.write_enable(regWriteW),
 	.reset(reset),
 	.DATA(SYNTHESIZED_WIRE_12),
@@ -578,7 +587,7 @@ Register_file	b2v_registerFile(
 	.Source_select_0(SYNTHESIZED_WIRE_14),
 	.Source_select_1(SYNTHESIZED_WIRE_15),
 	.out_0(SYNTHESIZED_WIRE_3),
-	.out_1(SYNTHESIZED_WIRE_2));
+	.out_1(SYNTHESIZED_WIRE_11));
 	defparam	b2v_registerFile.WIDTH = 32;
 
 
@@ -592,10 +601,18 @@ mux4to1	b2v_resultMux(
 	defparam	b2v_resultMux.W = 32;
 
 
+mux2to1	b2v_shSelector(
+	.sel(movImm),
+	.in0(SYNTHESIZED_WIRE_16),
+	.in1(SYNTHESIZED_WIRE_17),
+	.out(shD));
+	defparam	b2v_shSelector.W = 2;
+
+
 mux2to1	b2v_source0Mux(
 	.sel(regSrcD[1]),
 	.in0(Rn),
-	.in1(SYNTHESIZED_WIRE_16),
+	.in1(SYNTHESIZED_WIRE_18),
 	.out(SYNTHESIZED_WIRE_14));
 	defparam	b2v_source0Mux.W = 4;
 
@@ -616,6 +633,12 @@ mux2to1	b2v_srcBMux(
 	defparam	b2v_srcBMux.W = 32;
 
 
+constantValueGenerator	b2v_three(
+	.out(SYNTHESIZED_WIRE_17));
+	defparam	b2v_three.VAL = 3;
+	defparam	b2v_three.W = 2;
+
+
 simpleRegister	b2v_writebackRegister(
 	.reset(reset),
 	.clk(clk),
@@ -623,6 +646,5 @@ simpleRegister	b2v_writebackRegister(
 	.out(writebackRegisterW));
 	defparam	b2v_writebackRegister.W = 137;
 
-assign	shamtE[4] = 0;
 
 endmodule

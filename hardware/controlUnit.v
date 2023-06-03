@@ -13,15 +13,17 @@ module controlUnit
 	output[3:0] ALUControl,
 	output ALUSrc,
 	output[1:0] flagWrite,
-	output immSrc,
+	output[1:0] immSrc,
 	output destinationSrc,
-	output[1:0] regSrc	
+	output[1:0] regSrc,	
+	output movImm
 );
 
 assign 	regDataSrc	= (op == 2'b10) & funct[4],
 		PCSrc 		= (op == 2'b00) & (funct == 6'b010010),
 		branch 		= (op == 2'b10) & (funct[5]==1),
-		regWrite 	= ((op == 2'b00)&(funct[5]==0)) |
+		regWrite 	= ((op == 2'b00)&(funct[5]==0)) | //normal DP
+					  ((op == 2'b00)&(funct==6'b111010))| //eger movIMM
 				      ((op == 2'b01) & funct[0]) |
 				   	  ((op == 2'b10) & funct[4]),
 		memWrite		= (op == 2'b01) & ~funct[0],
@@ -32,10 +34,11 @@ assign 	regDataSrc	= (op == 2'b10) & funct[4],
 		flagWrite[1]= (op==2'b00)&(funct[0]==1'b1),
 		flagWrite[0]= (op==2'b00)&(funct[0]==1'b1)&
 						  ((funct[4:1]==2)|(funct[4:1]==4)|(funct[4:1]==10)),
-		immSrc		= (op == 2'b10),
+		immSrc		= op,
 		destinationSrc=(op == 2'b10),
 		regSrc[1]	= (op == 2'b10),
-		regSrc[0]	= (op == 2'b01);
+		regSrc[0]	= (op == 2'b01),
+		movImm		= (op == 2'b00) & funct[5];
 
 
 

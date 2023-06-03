@@ -3,7 +3,7 @@ module Register_file #(parameter WIDTH=32)
 	  input clk, write_enable, reset,
 	  input [3:0] Source_select_0, Source_select_1, Destination_select,
 	  input	[WIDTH-1:0] DATA, Reg_15,
-	  output reg [WIDTH-1:0] out_0, out_1
+	  output[WIDTH-1:0] out_0, out_1
     );
 
 wire [WIDTH-1:0] Reg_Out [14:0];
@@ -12,7 +12,7 @@ wire [14:0] Reg_enable;
 genvar i;
 generate
     for (i = 0 ; i < 15 ; i = i + 1) begin : registers
-        Register_sync_rw #(WIDTH) Reg (.clk(clk),.reset(reset),.we(Reg_enable[i]& write_enable),.DATA(DATA),.OUT(Reg_Out[i])); // BURASI DEGISTI
+        Register_sync_rw #(WIDTH) Reg (.clk(~clk),.reset(reset),.we(Reg_enable[i]& write_enable),.DATA(DATA),.OUT(Reg_Out[i])); // BURASI DEGISTI
     end
 endgenerate
 
