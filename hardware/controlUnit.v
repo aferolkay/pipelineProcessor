@@ -20,9 +20,10 @@ module controlUnit
 );
 
 assign 	regDataSrc	= (op == 2'b10) & funct[4],
-		PCSrc 		= (op == 2'b00) & (funct == 6'b010010),
-		branch 		= (op == 2'b10) & (funct[5]==1),
-		regWrite 	= ((op == 2'b00)&(funct[5]==0)) | //normal DP
+		PCSrc 		=  (op == 2'b00) & (funct == 6'b010010), //BX
+		branch 		= (op == 2'b10) & (funct[5]==1) |
+					  (op == 2'b00) & (funct == 6'b010010), // BX	  
+		regWrite 	= ((op == 2'b00)&(  funct[5]==0) & funct[4:1]!=4'b1010) | //normal DP
 					  ((op == 2'b00)&(funct==6'b111010))| //eger movIMM
 				      ((op == 2'b01) & funct[0]) |
 				   	  ((op == 2'b10) & funct[4]),

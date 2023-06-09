@@ -17,6 +17,7 @@ import cocotb.binary
 pytestmark = pytest.mark.simulator_required
 
 
+
 @cocotb.coroutine
 async def showRFctrl(dut):
     """This coroutine ...."""
@@ -44,12 +45,12 @@ async def readMemory(dut,address):
 @cocotb.coroutine
 async def showRegister(dut,register):
     """This coroutine ...."""
-    dut.SYNTHESIZED_WIRE_14.value = Force(register)
+    dut.SYNTHESIZED_WIRE_30.value = Force(register)
     await Timer(1,units="us")
-    result =  dut.SYNTHESIZED_WIRE_3.value
+    result =  dut.SYNTHESIZED_WIRE_19.value
     dut._log.info("R%d: %x", register,result)
-    #dut._log.info("%x", result) 
-    dut.SYNTHESIZED_WIRE_14.value = Release()
+    dut.SYNTHESIZED_WIRE_30.value = Release()
+    await Timer(1,units="us")
     return result
 
 @cocotb.coroutine
@@ -105,7 +106,7 @@ async def showDecodeStage(dut):
     dut._log.info("ALUControlD: %x", dut.ALUControlD.value)
     dut._log.info("ALUSrcD: %x", dut.ALUSrcD.value)
     dut._log.info("immSrcD: %x", dut.immSrcD.value)
-    dut._log.info("destinationSrcD: %x", dut.SYNTHESIZED_WIRE_9.value)
+    dut._log.info("destinationSrcD: %x", dut.SYNTHESIZED_WIRE_15.value)
     dut._log.info("regSrcD: %x", dut.regSrcD.value)
     dut._log.info("movImm: %x", dut.movImm.value)
     dut._log.info("shD: %x", dut.shD.value)
@@ -125,6 +126,8 @@ async def showExecuteStage(dut):
     dut._log.info("condEx: %x", dut.condEx.value)
     dut._log.info("destinationSrcE: %x", dut.destinationSrcE.value)
     dut._log.info("regDataSrcE: %x", dut.regDataSrcE.value)
+    dut._log.info("regWriteE: %x", dut.regWriteE.value)
+    dut._log.info("memWriteE: %x", dut.memWriteE.value)
 
 
 @cocotb.coroutine
@@ -152,7 +155,36 @@ async def showWriteBackStage(dut):
     dut._log.info("PC4W: %x", dut.PC4W.value)
     dut._log.info("WA3W: %x", dut.WA3W.value)
 
+@cocotb.coroutine
+async def nextCLK(dut):
+    await RisingEdge(dut.clk)
+    print(" ******* RISING EDGE ********")
+    await Timer(1,units="ns")
 
+
+@cocotb.coroutine
+async def showHazardUnit(dut):
+    """This coroutine ...."""
+    dut._log.info("Hazard Unit Controls:")
+    dut._log.info("RA1D: %x", dut.RA1D.value)
+    dut._log.info("RA2D: %x", dut.RA2D.value)
+    dut._log.info("RA1E: %x", dut.RA1E.value)
+    dut._log.info("RA2E: %x", dut.RA2E.value)
+    dut._log.info("WA3E: %x", dut.WA3E.value)
+    dut._log.info("WA3M: %x", dut.WA3M.value)
+    dut._log.info("WA3W: %x", dut.WA3W.value)
+    dut._log.info("branchTakenE: %x", dut.branchTakenE.value)
+    dut._log.info("regWriteM: %x", dut.regWriteM.value)
+    dut._log.info("regWriteW: %x", dut.regWriteW.value)
+    dut._log.info("resultSrcE: %x", dut.resultSrcE.value)
+    dut._log.info("forwardAE: %x", dut.forwardAE.value)
+    dut._log.info("forwardBE: %x", dut.forwardBE.value)
+    dut._log.info("stallFetch: %x", dut.stallFetch.value)
+    dut._log.info("stallDecode: %x", dut.stallDecode.value)
+    dut._log.info("flushDecode: %x", dut.flushDecode.value)
+    dut._log.info("flushExecute: %x", dut.flushExecute.value)
+    dut._log.info("match_12D_E: %x", dut.b2v_inst103.match_12D_E.value)
+    dut._log.info("LDRStall: %x", dut.b2v_inst103.LDRStall.value)
 
 @cocotb.test()
 async def test2sComp(dut):
@@ -161,25 +193,66 @@ async def test2sComp(dut):
     clock = Clock(dut.clk, 100, units="ms")  # Create a 10us period clock on port clk
     cocotb.start_soon(clock.start())  # Start the clock
     await Timer(1,units="ns")
-    await breakPoint(dut,0x178)
+
+    for i in range (1,25):
+        await nextCLK(dut)
+        await showDecodeStage(dut)
+        await showExecuteStage(dut)
+        await readRegisterFile(dut)
+        await showHazardUnit(dut)
+        dut._log.info("resultSrcD: %x", dut.resultSrcD.value)
+        dut._log.info("ALUOut: %x", dut.ALUOut.value)
+    
+    
+        
+"""
+    await showFetchStage(dut)
+    await showHazardUnit(dut)
+    await nextCLK(dut)
+    await showDecodeStage(dut)
+    await showHazardUnit(dut)
+    await nextCLK(dut)
+    await showExecuteStage(dut)
+    await showHazardUnit(dut)
+    await nextCLK(dut)
+    await showMemoryStage(dut)
+    await showHazardUnit(dut)
+    await nextCLK(dut)
+    await showWriteBackStage(dut)
+    await showHazardUnit(dut)
+"""
+    
+
+
+    
+    
+"""
+        dut._log.info(" Rn %x",dut.Rn.value)
+        dut._log.info(" mux output %x",dut.SYNTHESIZED_WIRE_26.value)
+"""
+"""
+    dut._log.info("**** 3rd Clock ****")
+    await nextCLK(dut)
     await readRegisterFile(dut)
 
-"""
-    await breakPoint(dut,0x160)
-    #await showFetchStage(dut)
-    await RisingEdge(dut.clk)
-    await Timer(1,units="ns")
-    #await showDecodeStage(dut)
-    await RisingEdge(dut.clk)
-    await Timer(1,units="ns")
-    #await showExecuteStage(dut)
-    await RisingEdge(dut.clk)
-    await Timer(1,units="ns")
-    #await showMemoryStage(dut)
-    await RisingEdge(dut.clk)
-    await Timer(1,units="ns")
-    await showWriteBackStage(dut)
-"""
+
+    dut._log.info("**** 4th Clock ****")
+    await nextCLK(dut)
+    await readRegisterFile(dut)
+
+    dut._log.info("**** 5th Clock ****")
+    await nextCLK(dut)
+    await readRegisterFile(dut)
+   
+    dut._log.info("**** 6th Clock ****")
+    await nextCLK(dut)
+    await readRegisterFile(dut)
+
+    dut._log.info("**** 7th Clock ****")
+    await nextCLK(dut)
+    await readRegisterFile(dut)
+"""   
+
 
 
 

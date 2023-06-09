@@ -3,6 +3,7 @@ module simpleRegister #(parameter W=4)
 	input			reset,
 	input[W-1:0]	data,
 	input			clk,
+	input			wr_en,
 	output[W-1:0]	out
 );
 	reg[W-1:0]	REGISTER;
@@ -18,7 +19,8 @@ module simpleRegister #(parameter W=4)
 		if(reset == 1)
 			REGISTER <=0;
 		else begin
-			REGISTER <= data;
+			if(wr_en)
+				REGISTER <= data;
 		end
 	end
 

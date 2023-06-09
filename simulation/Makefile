@@ -21,10 +21,10 @@ VERILOG_SOURCES += $(shell pwd)/../hardware/mux2to1.v
 VERILOG_SOURCES += $(shell pwd)/../hardware/mux4to1.v
 VERILOG_SOURCES += $(shell pwd)/../hardware/pipelineProcessor.v
 VERILOG_SOURCES += $(shell pwd)/../hardware/Register_file.v
-VERILOG_SOURCES += $(shell pwd)/../hardware/registerFile.v
 VERILOG_SOURCES += $(shell pwd)/../hardware/simpleRegister.v
 VERILOG_SOURCES += $(shell pwd)/../hardware/writeENregister.v
 VERILOG_SOURCES += $(shell pwd)/../hardware/writeENregisterReverse.v
+VERILOG_SOURCES += $(shell pwd)/../hardware/hazardUnit.v
 
 
 VERILOG_SOURCES += $(shell pwd)/../odtuclassCodes/Decoder_2to4.v
