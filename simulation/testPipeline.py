@@ -20,7 +20,7 @@ pytestmark = pytest.mark.simulator_required
 
 @cocotb.coroutine
 async def showRFctrl(dut):
-    """This coroutine ...."""
+
     dut._log.info("Register File Controls:")
     dut._log.info("Source0: %x", dut.SYNTHESIZED_WIRE_14.value)
     dut._log.info("Out0: %x", dut.SYNTHESIZED_WIRE_3.value)
@@ -31,12 +31,12 @@ async def showRFctrl(dut):
   
 @cocotb.coroutine
 async def showFlags(dut):
-    """This coroutine ...."""
+   
     dut._log.info("Flags NZCV: %x", dut.b2v_inst23.flags.value)
     
 @cocotb.coroutine
 async def readMemory(dut,address):
-    """This coroutine ...."""
+    
     dut.ALUOutM.value = Force(address)
     await Timer(1)
     dut._log.info("M[%d]: %x", address, dut.readDataM.value) 
@@ -44,7 +44,6 @@ async def readMemory(dut,address):
 
 @cocotb.coroutine
 async def showRegister(dut,register):
-    """This coroutine ...."""
     dut.SYNTHESIZED_WIRE_30.value = Force(register)
     await Timer(1,units="us")
     result =  dut.SYNTHESIZED_WIRE_19.value
@@ -55,7 +54,6 @@ async def showRegister(dut,register):
 
 @cocotb.coroutine
 async def readRegisterFile(dut):
-    """This coroutine ...."""
     await showRegister(dut,0)
     await showRegister(dut,1)
     await showRegister(dut,2)
@@ -75,7 +73,6 @@ async def readRegisterFile(dut):
 
 @cocotb.coroutine
 async def breakPoint(dut,PC):
-    """This coroutine ...."""
     watchdog = 0
     while dut.PCF.value != PC and watchdog<1000 :
         await RisingEdge(dut.clk)  
@@ -85,7 +82,6 @@ async def breakPoint(dut,PC):
 
 @cocotb.coroutine
 async def showFetchStage(dut):
-    """This coroutine ...."""
     dut._log.info("****Fetch Stage Signals****")
     dut._log.info("PCF: %x", dut.PCF.value)
     dut._log.info("PCplus4F: %x", dut.PCplus4F.value)
@@ -93,7 +89,6 @@ async def showFetchStage(dut):
 
 @cocotb.coroutine
 async def showDecodeStage(dut):
-    """This coroutine ...."""
     dut._log.info("****Decode Stage Signals****")
     dut._log.info("instructionD: %x", dut.instructionD.value)
     dut._log.info("PC4D: %x", dut.PC4D.value)
@@ -113,7 +108,6 @@ async def showDecodeStage(dut):
 
 @cocotb.coroutine
 async def showExecuteStage(dut):
-    """This coroutine ...."""
     dut._log.info("****Execute Stage Signals****")
     dut._log.info("srcAE: %x", dut.srcAE.value)
     dut._log.info("srcBE: %x", dut.srcBE.value)
@@ -129,10 +123,8 @@ async def showExecuteStage(dut):
     dut._log.info("regWriteE: %x", dut.regWriteE.value)
     dut._log.info("memWriteE: %x", dut.memWriteE.value)
 
-
 @cocotb.coroutine
 async def showMemoryStage(dut):
-    """This coroutine ...."""
     dut._log.info("****Memory Stage Signals****")
     dut._log.info("memWriteM: %x", dut.memWriteM.value)
     dut._log.info("ALUOutM: %x", dut.ALUOutM.value)
@@ -144,7 +136,6 @@ async def showMemoryStage(dut):
 
 @cocotb.coroutine
 async def showWriteBackStage(dut):
-    """This coroutine ...."""
     dut._log.info("****WriteBack Stage Signals****")
     dut._log.info("regDataSrcW: %x", dut.regDataSrcW.value)
     dut._log.info("PCSrcW: %x", dut.PCSrcW.value)
@@ -156,15 +147,7 @@ async def showWriteBackStage(dut):
     dut._log.info("WA3W: %x", dut.WA3W.value)
 
 @cocotb.coroutine
-async def nextCLK(dut):
-    await RisingEdge(dut.clk)
-    print(" ******* RISING EDGE ********")
-    await Timer(1,units="ns")
-
-
-@cocotb.coroutine
 async def showHazardUnit(dut):
-    """This coroutine ...."""
     dut._log.info("Hazard Unit Controls:")
     dut._log.info("RA1D: %x", dut.RA1D.value)
     dut._log.info("RA2D: %x", dut.RA2D.value)
@@ -186,122 +169,95 @@ async def showHazardUnit(dut):
     dut._log.info("match_12D_E: %x", dut.b2v_inst103.match_12D_E.value)
     dut._log.info("LDRStall: %x", dut.b2v_inst103.LDRStall.value)
 
-@cocotb.test()
-async def test2sComp(dut):
+@cocotb.coroutine
+async def nextCLK(dut):
+    await RisingEdge(dut.clk)
+    print(" ******* RISING EDGE ********")
+    await Timer(1,units="ns")
 
+@cocotb.coroutine
+async def showBranchTargetBuffer(dut):
+    dut._log.info("PCIn: %x | BTAIn: %x ",dut.PCIn.value , dut.branchTargetIn.value)
+    dut._log.info("PC[0]: %x | BTA[0]: %x", dut.PC[0].value, dut.BTA[0].value) 
+    dut._log.info("PC[1]: %x | BTA[1]: %x", dut.PC[1].value, dut.BTA[1].value)
+    dut._log.info("PC[2]: %x | BTA[2]: %x", dut.PC[2].value, dut.BTA[2].value)
+    dut._log.info("Output: %x ",dut.branchTargetOut.value)  
+    dut._log.info("Hitflag: %x ",dut.hitFlag.value)  
+    dut._log.info("match0: %x | match1: %x | match2: %x ",dut.match[0].value ,dut.match[1].value,dut.match[2].value)
+@cocotb.test()
+async def testBranchTargetBuffer(dut):
     dut.reset.value = 0
+    dut.PCIn.value = 0xDDDDDDDD
+    dut.branchTargetIn.value = 0xDDDDDDDD
     clock = Clock(dut.clk, 100, units="ms")  # Create a 10us period clock on port clk
     cocotb.start_soon(clock.start())  # Start the clock
+    
+
+
+    dut.PCIn.value = 0
+    dut.branchTargetIn.value = 0
+    # hit = 1, 
+    await RisingEdge(dut.clk); #--------------------
+    print("posedge ---------------")
+    
+    dut.PCIn.value = 0x14
+    dut.branchTargetIn.value = 0xDE 
+    await Timer(1,units="ns")
+    await showBranchTargetBuffer(dut);
+
+    await RisingEdge(dut.clk); #--------------------
+    print("posedge ---------------")
+    dut.PCIn.value = 0xf8
+    dut.branchTargetIn.value = 0x38
+    await Timer(1,units="ns")
+    await showBranchTargetBuffer(dut);
+
+
+    await RisingEdge(dut.clk); #--------------------
+    print("posedge ---------------")
+    dut.PCIn.value = 0x24
+    dut.branchTargetIn.value = 0x34
     await Timer(1,units="ns")
 
-    for i in range (1,25):
-        await nextCLK(dut)
-        await showDecodeStage(dut)
-        await showExecuteStage(dut)
-        await readRegisterFile(dut)
-        await showHazardUnit(dut)
-        dut._log.info("resultSrcD: %x", dut.resultSrcD.value)
-        dut._log.info("ALUOut: %x", dut.ALUOut.value)
-    
-    
-        
-"""
-    await showFetchStage(dut)
-    await showHazardUnit(dut)
-    await nextCLK(dut)
-    await showDecodeStage(dut)
-    await showHazardUnit(dut)
-    await nextCLK(dut)
-    await showExecuteStage(dut)
-    await showHazardUnit(dut)
-    await nextCLK(dut)
-    await showMemoryStage(dut)
-    await showHazardUnit(dut)
-    await nextCLK(dut)
-    await showWriteBackStage(dut)
-    await showHazardUnit(dut)
-"""
-    
+    await showBranchTargetBuffer(dut);
 
-
-    
-    
-"""
-        dut._log.info(" Rn %x",dut.Rn.value)
-        dut._log.info(" mux output %x",dut.SYNTHESIZED_WIRE_26.value)
-"""
-"""
-    dut._log.info("**** 3rd Clock ****")
-    await nextCLK(dut)
-    await readRegisterFile(dut)
-
-
-    dut._log.info("**** 4th Clock ****")
-    await nextCLK(dut)
-    await readRegisterFile(dut)
-
-    dut._log.info("**** 5th Clock ****")
-    await nextCLK(dut)
-    await readRegisterFile(dut)
-   
-    dut._log.info("**** 6th Clock ****")
-    await nextCLK(dut)
-    await readRegisterFile(dut)
-
-    dut._log.info("**** 7th Clock ****")
-    await nextCLK(dut)
-    await readRegisterFile(dut)
-"""   
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-   
-"""
-    await breakPoint(dut,0xb0) 
-    await showFetchStage(dut)
-
-    await RisingEdge(dut.clk)
+    await RisingEdge(dut.clk); #--------------------
+    print("posedge ---------------")
+    dut.PCIn.value = 0x14
+    dut.branchTargetIn.value = 0xff
     await Timer(1,units="ns")
-    await showDecodeStage(dut)
 
-    await RisingEdge(dut.clk)
+    await showBranchTargetBuffer(dut);
+
+    await RisingEdge(dut.clk); #--------------------
+    print("posedge ---------------")
+    dut.PCIn.value = 0xe7
+    dut.branchTargetIn.value = 0x44
     await Timer(1,units="ns")
-    await showExecuteStage(dut)
 
-    await RisingEdge(dut.clk)
+    await showBranchTargetBuffer(dut);
+
+    await RisingEdge(dut.clk); #--------------------
+    print("posedge ---------------")
+    dut.PCIn.value = 0xe7
+    dut.branchTargetIn.value = 0x44
     await Timer(1,units="ns")
-    await showMemoryStage(dut)
 
+    await showBranchTargetBuffer(dut);
 
-    await RisingEdge(dut.clk)
+    await RisingEdge(dut.clk); #--------------------
+    print("posedge ---------------")
+    dut.PCIn.value = 0xdc
+    dut.branchTargetIn.value = 0x18
     await Timer(1,units="ns")
-    await showWriteBackStage(dut)
+
+    await showBranchTargetBuffer(dut);
     
-    
-    #await FallingEdge(dut.clk)
-    #await Timer(1,units="ns")
-    #await readRegisterFile(dut)
-"""
+    await RisingEdge(dut.clk); #--------------------
+    print("posedge ---------------")
+    dut.PCIn.value = 0xe7
+    dut.branchTargetIn.value = 0x44
+    await Timer(1,units="ns")
 
+    await showBranchTargetBuffer(dut);
 
-    
- 
-  
- 
- 
-
-
-   
